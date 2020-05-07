@@ -139,7 +139,7 @@ Compares the original question (with a blank in it) to the current buffer."
 (defun 4clojure-problem-number-of-current-buffer ()
   "Get the problem number for the current buffer or 0."
   (let* ((bufname (buffer-name (current-buffer)))
-         (number-with-star (first (last (split-string bufname "-"))))
+         (number-with-star (car (last (split-string bufname "-"))))
          (problem-number (substring number-with-star
                                     0
                                     (1- (string-width number-with-star)))))
