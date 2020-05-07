@@ -173,6 +173,12 @@ Compares the original question (with a blank in it) to the current buffer."
   (4clojure-start-new-problem problem-number))
 
 ;;;###autoload
+(defun 4clojure-browse-question (problem-number)
+  "Open problem PROBLEM-NUMBER using `browse-url'."
+  (interactive "sWhich 4clojure question? ")
+  (browse-url (format "http://www.4clojure.com/problem/%s" problem-number)))
+
+;;;###autoload
 (defun 4clojure-login (username)
   "Log in to the 4clojure website with the supplied USERNAME.
 Prompts for a password."
