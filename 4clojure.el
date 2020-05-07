@@ -229,7 +229,7 @@ Prompts for a password."
     (let ((prefix-map (make-sparse-keymap)))
       (define-key prefix-map (kbd "c") '4clojure-check-answers)
       (define-key prefix-map (kbd "n") '4clojure-next-question)
-      (define-key map "C-c" prefix-map))
+      (define-key map (kbd "C-c") prefix-map))
     map)
   "Keymap for 4clojure mode.")
 
