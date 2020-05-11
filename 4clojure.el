@@ -181,7 +181,8 @@ Compares the original question (with a blank in it) to the current buffer."
 ;;;###autoload
 (defun 4clojure-browse-question (problem-number)
   "Open problem PROBLEM-NUMBER using `browse-url'."
-  (interactive "sWhich 4clojure question? ")
+  (interactive (list (read-string "Which 4clojure question? "
+				  (int-to-string (4clojure-problem-number-of-current-buffer)))))
   (browse-url (format "http://www.4clojure.com/problem/%s" problem-number)))
 
 ;;;###autoload
