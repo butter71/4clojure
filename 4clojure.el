@@ -43,6 +43,9 @@
 (defvar 4clojure-cached-question nil
   "The current question, in the format: (number question-data).")
 
+(defvar 4clojure-default-directory nil
+  "The `default-directory' for 4clojure buffers.")
+
 (defun 4clojure-get-question-cached (problem-number)
   "Get (and memoize) the problem PROBLEM-NUMBER."
   (if (string= (car 4clojure-cached-question) problem-number)
@@ -101,22 +104,23 @@ These are called 'tests' on the site."
 (defun 4clojure-start-new-problem (problem-number)
   "Open a new buffer for PROBLEM-NUMBER with the question and description.
 Don't clobber existing text in the buffer if the problem was already opened."
-  (let ((buffer (get-buffer-create (format "*4clojure-problem-%s*" problem-number)))
-	(title (4clojure-title-of-problem problem-number))
-	(description (4clojure-description-of-problem problem-number))
-        (questions (4clojure-questions-for-problem problem-number))
-        (restrictions (4clojure-restrictions-for-problem problem-number))
-	(difficulty (4clojure-difficulty-of-problem problem-number)))
-    (switch-to-buffer buffer)
-    ;; only add to empty buffers, thanks: https://stackoverflow.com/q/18312897
-    (when (= 0 (buffer-size buffer))
-      (insert (4clojure-format-problem-for-buffer problem-number title description questions restrictions difficulty))
-      (goto-char (point-min))
-      (search-forward "__")
-      (backward-char 2)
-      (when (functionp #'clojure-mode)
-        (clojure-mode)
-        (4clojure-mode)))))
+  (let ((default-directory (or 4clojure-default-directory default-directory)))
+    (let ((buffer (get-buffer-create (format "*4clojure-problem-%s*" problem-number)))
+	 (title (4clojure-title-of-problem problem-number))
+	 (description (4clojure-description-of-problem problem-number))
+         (questions (4clojure-questions-for-problem problem-number))
+         (restrictions (4clojure-restrictions-for-problem problem-number))
+	 (difficulty (4clojure-difficulty-of-problem problem-number)))
+     (switch-to-buffer buffer)
+     ;; only add to empty buffers, thanks: https://stackoverflow.com/q/18312897
+     (when (= 0 (buffer-size buffer))
+       (insert (4clojure-format-problem-for-buffer problem-number title description questions restrictions difficulty))
+       (goto-char (point-min))
+       (search-forward "__")
+       (backward-char 2)
+       (when (functionp #'clojure-mode)
+         (clojure-mode)
+         (4clojure-mode))))))
 
 (defun 4clojure-format-problem-for-buffer (problem-number title description questions &optional restrictions difficulty)
   "Format problem PROBLEM-NUMBER for an Emacs buffer.
