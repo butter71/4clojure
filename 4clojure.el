@@ -81,8 +81,9 @@ These are called 'tests' on the site."
 
 (defun 4clojure-description-of-problem (problem-number)
   "Get the description of problem PROBLEM-NUMBER."
-  (assoc-default 'description
-                 (4clojure-get-question-cached problem-number)))
+  (replace-regexp-in-string
+   "" "" (assoc-default 'description
+			  (4clojure-get-question-cached problem-number))))
 
 (defun 4clojure-difficulty-of-problem (problem-number)
   "Get the difficulty of problem PROBLEM-NUMBER."
