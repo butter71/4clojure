@@ -39,12 +39,16 @@
 (require 'json)
 (require 'request)
 (require 'cl-lib)
+(require 'shr)
 
 (defvar 4clojure-cached-question nil
   "The current question, in the format: (number question-data).")
 
 (defvar 4clojure-default-directory nil
   "The `default-directory' for 4clojure buffers.")
+
+(defvar 4clojure-description-width nil
+  "The width of formatted description text.")
 
 (defun 4clojure-get-question-cached (problem-number)
   "Get (and memoize) the problem PROBLEM-NUMBER."
@@ -84,9 +88,19 @@ These are called 'tests' on the site."
 
 (defun 4clojure-description-of-problem (problem-number)
   "Get the description of problem PROBLEM-NUMBER."
-  (replace-regexp-in-string
-   "" "" (assoc-default 'description
-			  (4clojure-get-question-cached problem-number))))
+  (with-temp-buffer
+    (insert
+     (replace-regexp-in-string
+      "\r\n" "\n"
+      (assoc-default 'description
+		     (4clojure-get-question-cached problem-number))))
+    (let ((shr-use-fonts nil)
+	  (shr-width (or 4clojure-description-width shr-width fill-column))
+	  (comment-start ";;")
+	  (comment-style 'plain))
+      (shr-render-region (point-min) (point-max))
+      (comment-region (point-min) (point-max)))
+    (buffer-string)))
 
 (defun 4clojure-difficulty-of-problem (problem-number)
   "Get the difficulty of problem PROBLEM-NUMBER."
@@ -128,8 +142,7 @@ In addition to displaying the DESCRIPTION, QUESTIONS and RESTRICTIONS,
 it adds a header and tip about how to check your answers."
   (concat
    ";; 4Clojure Question " problem-number ": " title "  (" difficulty ")\n"
-   ";;\n"
-   ";; " (replace-regexp-in-string "\s*\n+\s*" "\n;;\n;; " description) "\n"
+   ";;\n" description "\n"
    (when restrictions
      (concat ";;\n;; Restrictions (please don't use these function(s)): "
              (mapconcat #'identity restrictions ", ")
